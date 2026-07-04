@@ -32,7 +32,7 @@ body {
 /* 上中央：月とタイトル */
 .top-oracle {
   position: fixed;
-  top: 18px;
+  top: 55px;
   left: 50%;
   transform: translateX(-50%);
   width: 380px;
@@ -128,8 +128,9 @@ body {
 /* 左下：月の欠片HUD */
 .fragment-hud {
   position: fixed;
-  left: 28px;
-  top: 24px;
+  left: 95px;
+  bottom: 95px;
+  transform: translateX(-110%);
   width: 340px;
   padding: 15px;
   border-radius: 22px;
@@ -188,8 +189,9 @@ body {
 /* 右下：試練HUD */
 .trial-hud {
   position: fixed;
-  right: 28px;
-  bottom: 28px;
+  right: 95px;
+  bottom: 95px;
+  transform: translateX(10%);
   width: 340px;
   padding: 16px;
   border-radius: 22px;

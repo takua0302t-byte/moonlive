@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MoonLive Legendary Edition</title>
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <main id="moonlive" class="moonlive">
 
+    <!-- 常時演出 -->
     <div id="ambientStars" class="ambient-stars"></div>
     <div id="moonParticles" class="moon-particles"></div>
 
@@ -26,7 +27,7 @@
       </div>
     </section>
 
-    <!-- 左下：月の欠片 -->
+    <!-- 左下：月の欠片HUD -->
     <section class="fragment-hud">
       <div class="hud-label">🌙 月の欠片</div>
 
@@ -45,80 +46,47 @@
         <span id="fragments">245</span> / <span id="maxFragments">500</span>
       </div>
     </section>
-
-    <!-- 右下：試練 -->
+        <!-- 右下：現在の試練 -->
     <section class="trial-hud">
-      <div class="hud-label">📜 現在の試練</div>
-      <div id="currentTrial" class="trial-name">月の導きを待機中</div>
-      <div class="trial-timer">残り時間：<span id="timer">--:--</span></div>
+      <div class="trial-label">📜 現在の試練</div>
+
+      <div id="trialTitle" class="trial-title">
+        月の導きを待機中
+      </div>
+
+      <div id="trialTimer" class="trial-timer">
+        残り時間 --:--
+      </div>
     </section>
 
-    <!-- 右上：月神 -->
-    <section id="moonGodBoard" class="moon-god-board">
-      <div>👑 本日の月神</div>
-      <strong id="moonGodName">---</strong>
-    </section>
-
-    <!-- 通常ギフト演出 -->
+    <!-- ポップアップ -->
     <div id="popup" class="popup">
-      <div id="popupTitle"></div>
-      <div id="popupName"></div>
-      <div id="popupText"></div>
+      <div id="popupTitle" class="popup-title"></div>
+      <div id="popupName" class="popup-name"></div>
+      <div id="popupText" class="popup-text"></div>
     </div>
 
-    <!-- 大ギフト：ルーレット -->
+    <!-- 月神表示 -->
+    <div id="moonGodBoard" class="moon-god-board">
+      <div>🌕 今宵の月神</div>
+      <strong id="moonGodName">---</strong>
+    </div>
+
+    <!-- ルーレット -->
     <div id="roulette" class="roulette">
-      <div class="roulette-title">⭐ 月の審判</div>
+      <div class="roulette-title">月の審判</div>
       <div id="rouletteText">運命を選定中...</div>
     </div>
 
-    <!-- 特大ギフト：月神降臨 -->
-    <div id="godScene" class="god-scene">
-      <div class="god-dark"></div>
+    <!-- 暗転 -->
+    <div id="blackout" class="blackout"></div>
 
-      <div class="god-moon-wrap">
-        <img src="moon.png" alt="巨大満月" id="godSceneMoon">
-      </div>
-
-      <div class="god-text">
-        <div class="god-sub">今宵の月神</div>
-        <div id="godSceneName" class="god-name">---</div>
-        <div class="god-message">
-          月神の加護が<br>
-          夜空を満たした
-        </div>
-      </div>
-    </div>
-
-    <!-- GIFT表示ウィンドウ：後で !gift 用に使う -->
-   <div id="giftWindow" class="gift-window">
-  <div class="gift-window-title">月心神楽 ギフト表</div>
-
-  <div class="gift-line">
-    <strong>🌙 月の囁き</strong><br>
-    月の民に小さな神託が届く
-  </div>
-
-  <div class="gift-line">
-    <strong>🔔 月の試練</strong><br>
-    月光が強まり、新たな試練が降る
-  </div>
-
-  <div class="gift-line">
-    <strong>⭐ 月の審判</strong><br>
-    流れ星が運命の試練を選ぶ
-  </div>
-
-  <div class="gift-line">
-    <strong>👑 月神降臨</strong><br>
-    夜空が満ち、月神の名が刻まれる
-  </div>
-
-  <div class="gift-window-footer">月から届く神託</div>
-</div>
+    <!-- エフェクト描画 -->
+    <div id="effectLayer"></div>
 
   </main>
 
   <script src="script.js"></script>
+
 </body>
 </html>
