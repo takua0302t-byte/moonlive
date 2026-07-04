@@ -742,8 +742,19 @@ body {
 
 }
 /* =========================
-   HUD位置 強制修正版
+   MoonLive 最終配置修正版
 ========================= */
+
+.moonlive {
+  width: 720px !important;
+  height: 1280px !important;
+  position: relative !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  transform: none !important;
+  left: auto !important;
+  top: auto !important;
+}
 
 .fragment-hud {
   position: absolute !important;
