@@ -1,89 +1,113 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>MoonLive Control</title>
-<style>
-  body {
-    background: #101020;
-    color: white;
-    font-family: "Yu Gothic", sans-serif;
-    padding: 24px;
-  }
+  <meta charset="UTF-8">
+  <title>MoonLive Control</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #080b20;
+      color: white;
+      font-family: "Yu Gothic", sans-serif;
+    }
 
-  button {
-    padding: 12px 18px;
-    margin: 6px;
-    border: none;
-    border-radius: 10px;
-    background: #d8c27a;
-    color: #101020;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 16px;
-  }
+    .panel {
+      width: 380px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #111735;
+      border: 1px solid rgba(255, 220, 130, 0.6);
+      box-shadow: 0 0 24px rgba(255, 220, 120, 0.25);
+    }
 
-  input {
-    padding: 10px;
-    margin: 6px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-  }
-</style>
+    h1 {
+      font-size: 24px;
+      color: #fff0a8;
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 9px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(90deg, #fff3ad, #d9bb62);
+      color: #17132c;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row button {
+      width: 50%;
+    }
+
+    .gift-btn {
+      background: linear-gradient(90deg, #b9d7ff, #8f8cff);
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="panel">
+    <h1>🌕 MoonLive Control</h1>
 
-<h1>🌙 MoonLive Control</h1>
+    <input id="giverName" type="text" placeholder="贈り主の名前">
 
-<h2>月の欠片</h2>
-<button onclick="send('/add?amount=1')">欠片 +1</button>
-<button onclick="send('/add?amount=10')">月詠み +10</button>
-<button onclick="send('/add?amount=20')">シェア +20</button>
-<button onclick="send('/reset')">夜を明ける</button>
+    <button onclick="sendCommand('smallGift')">🌙 小ギフト</button>
+    <button onclick="sendCommand('mediumGift')">🔔 中ギフト</button>
+    <button onclick="sendCommand('largeGift')">⭐ 大ギフト</button>
+    <button onclick="sendCommand('godGift')">👑 特大ギフト</button>
 
-<h2>試練タイマー</h2>
-<input id="trialName" placeholder="試練名">
-<input id="trialSeconds" type="number" value="180">
-<button onclick="startTrial()">試練開始</button>
-<button onclick="clearTrial()">試練終了</button>
+    <button class="gift-btn" onclick="sendCommand('showGift')">🎁 ギフト表を表示</button>
 
-<script>
-function startTrial() {
-  const name = document.getElementById("trialName").value || "試練";
-  const seconds = Number(document.getElementById("trialSeconds").value || 180);
+    <div class="row">
+      <button onclick="sendCommand('addFragments')">欠片 +10</button>
+      <button onclick="sendCommand('resetMoon')">リセット</button>
+    </div>
 
-  fetch(`/startTrial?name=${encodeURIComponent(name)}&seconds=${seconds}`);
-}
+    <div class="note">
+      配信画面：index.html<br>
+      操作画面：control.html<br>
+      両方を同じブラウザで開いて使う。
+    </div>
+  </div>
 
-function clearTrial() {
-  fetch("/clearTrial");
-}
-</script>
-<script>
-function addMoon(amount) {
-  fetch(`/add?amount=${amount}`);
-}
+  <script>
+    function sendCommand(type) {
+      const name = document.getElementById("giverName").value.trim() || "月の民";
 
-function resetMoon() {
-  fetch("/reset");
-}
+      const command = {
+        type: type,
+        name: name,
+        time: Date.now()
+      };
 
-function startTrial() {
-  const nameInput = document.querySelector('input[placeholder], input[type="text"]');
-  const numberInput = document.querySelector('input[type="number"]');
-
-  const name = nameInput ? nameInput.value : "試練";
-  const seconds = numberInput ? numberInput.value : 180;
-
-  fetch(`/startTrial?name=${encodeURIComponent(name)}&seconds=${seconds}`);
-}
-
-function clearTrial() {
-  fetch("/clearTrial");
-}
-</script>
-
-
+      localStorage.setItem("moonliveCommand", JSON.stringify(command));
+    }
+  </script>
 </body>
 </html>
