@@ -1,101 +1,74 @@
+const express = require("express");
 const http = require("http");
-const fs = require("fs");
+const WebSocket = require("ws");
 const path = require("path");
-const url = require("url");
+
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+app.use(express.static(__dirname));
 
 let state = {
-  moon: 0,
-  maxMoon: 500,
-  trialName: "",
-  trialEnd: 0
+  fragments: 245,
+  maxFragments: 500,
+  trial: "月の導きを待機中",
+  timer: "--:--",
+  moonGod: "---"
 };
 
-let clients = [];
+function broadcast(payload) {
+  const message = JSON.stringify(payload);
 
-function sendState() {
-  const data = `data: ${JSON.stringify(state)}\n\n`;
-  clients.forEach(res => res.write(data));
-}
-
-function serveFile(res, fileName, type) {
-  fs.readFile(path.join(__dirname, fileName), (err, data) => {
-    if (err) {
-      res.writeHead(404);
-      res.end("Not found");
-      return;
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
     }
-    res.writeHead(200, { "Content-Type": type });
-    res.end(data);
   });
 }
 
-const types = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".webp": "image/webp"
-};
+wss.on("connection", (ws) => {
+  console.log("Client connected");
 
-const server = http.createServer((req, res) => {
-  const parsed = url.parse(req.url, true);
+  ws.send(JSON.stringify({
+    type: "sync",
+    state
+  }));
 
-  if (parsed.pathname === "/events") {
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive"
-    });
+  ws.on("message", (message) => {
+    try {
+      const data = JSON.parse(message);
 
-    clients.push(res);
-    res.write(`data: ${JSON.stringify(state)}\n\n`);
+      if (data.type === "command") {
+        broadcast({
+          type: "command",
+          command: data.command
+        });
+      }
 
-    req.on("close", () => {
-      clients = clients.filter(c => c !== res);
-    });
-    return;
-  }
+      if (data.type === "update") {
+        state = {
+          ...state,
+          ...data.state
+        };
 
-  if (parsed.pathname === "/add") {
-    state.moon = Math.min(state.maxMoon, state.moon + Number(parsed.query.amount || 0));
-    sendState();
-    res.end("ok");
-    return;
-  }
+        broadcast({
+          type: "sync",
+          state
+        });
+      }
+    } catch (error) {
+      console.log("Invalid message:", error.message);
+    }
+  });
 
-  if (parsed.pathname === "/reset") {
-    state.moon = 0;
-    sendState();
-    res.end("ok");
-    return;
-  }
-
-  if (parsed.pathname === "/startTrial") {
-    state.trialName = parsed.query.name || "試練";
-    const seconds = Number(parsed.query.seconds || 180);
-    state.trialEnd = Date.now() + seconds * 1000;
-    sendState();
-    res.end("ok");
-    return;
-  }
-
-  if (parsed.pathname === "/clearTrial") {
-    state.trialName = "";
-    state.trialEnd = 0;
-    sendState();
-    res.end("ok");
-    return;
-  }
-
-  let filePath = parsed.pathname === "/" ? "/control.html" : parsed.pathname;
-  filePath = filePath.replace("/", "");
-
-  const ext = path.extname(filePath);
-  serveFile(res, filePath, types[ext] || "text/plain");
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
 });
 
 server.listen(3000, () => {
-  console.log("MoonLive System 起動中 → http://127.0.0.1:3000/control.html");
+  console.log("MoonLive Server 起動中");
+  console.log("配信画面: http://localhost:3000/");
+  console.log("操作画面: http://localhost:3000/control.html");
 });

@@ -1,7 +1,10 @@
+let socket = null;
+let reconnectTimer = null;
+
 let fragments = 245;
 const maxFragments = 500;
-let moonGod = "---";
 let timerInterval = null;
+let moonGod = "---";
 
 const smallTrials = [
   { text: "30秒間、片手操作", time: 30 },
@@ -29,22 +32,102 @@ const rouletteTrials = [
   { text: "全力で褒める縛り", time: 60 }
 ];
 
-function getName() {
-  return window.controlName || "月の民";
+function connectSocket() {
+  socket = new WebSocket("ws://localhost:3000");
+
+  socket.onopen = () => {
+    console.log("MoonLive connected");
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "command") {
+      executeCommand(data.command);
+    }
+
+    if (data.type === "sync") {
+      applyState(data.state);
+    }
+  };
+
+  socket.onclose = () => {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(connectSocket, 1000);
+  };
+}
+
+function sendState() {
+  if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+  socket.send(JSON.stringify({
+    type: "update",
+    state: {
+      fragments,
+      maxFragments,
+      trial: getTrialText(),
+      timer: getTimerText(),
+      moonGod
+    }
+  }));
+}
+
+function applyState(state) {
+  if (!state) return;
+
+  if (typeof state.fragments === "number") {
+    fragments = state.fragments;
+    updateGauge(false);
+  }
+
+  if (state.trial) {
+    setText("trialTitle", state.trial);
+    setText("currentTrial", state.trial);
+  }
+
+  if (state.timer) {
+    setText("trialTimer", "残り時間 " + state.timer);
+    setText("timer", state.timer);
+  }
+
+  if (state.moonGod) {
+    moonGod = state.moonGod;
+    setText("moonGodName", moonGod);
+    const board = document.getElementById("moonGodBoard");
+    if (board && moonGod !== "---") board.classList.add("show");
+  }
+}
+
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function getTrialText() {
+  const el = document.getElementById("trialTitle") || document.getElementById("currentTrial");
+  return el ? el.textContent : "月の導きを待機中";
+}
+
+function getTimerText() {
+  const el = document.getElementById("trialTimer") || document.getElementById("timer");
+  if (!el) return "--:--";
+  return el.textContent.replace("残り時間", "").trim();
 }
 
 function randomPick(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-function updateGauge() {
+function updateGauge(shouldSend = true) {
   const gauge = document.getElementById("gaugeFill");
   const fragmentText = document.getElementById("fragments");
 
   const percent = Math.min((fragments / maxFragments) * 100, 100);
 
-  gauge.style.width = percent + "%";
-  fragmentText.textContent = fragments;
+  if (gauge) gauge.style.width = percent + "%";
+  if (fragmentText) fragmentText.textContent = fragments;
+
+  if (shouldSend) sendState();
 
   if (fragments >= maxFragments) {
     fullMoonEvent();
@@ -61,25 +144,33 @@ function resetMoon() {
   fragments = 0;
   updateGauge();
 
-  document.getElementById("currentTrial").textContent = "月の導きを待機中";
-  document.getElementById("timer").textContent = "--:--";
+  setText("trialTitle", "月の導きを待機中");
+  setText("currentTrial", "月の導きを待機中");
+  setText("trialTimer", "残り時間 --:--");
+  setText("timer", "--:--");
+
+  sendState();
 }
 
 function setTrial(trial) {
-  document.getElementById("currentTrial").textContent = trial.text;
+  setText("trialTitle", trial.text);
+  setText("currentTrial", trial.text);
   startTimer(trial.time);
+  sendState();
 }
 
 function startTimer(seconds) {
   clearInterval(timerInterval);
 
   let remaining = seconds;
-  const timer = document.getElementById("timer");
 
   function render() {
     const min = String(Math.floor(remaining / 60)).padStart(2, "0");
     const sec = String(remaining % 60).padStart(2, "0");
-    timer.textContent = `${min}:${sec}`;
+    const text = `${min}:${sec}`;
+
+    setText("trialTimer", "残り時間 " + text);
+    setText("timer", text);
   }
 
   render();
@@ -87,21 +178,26 @@ function startTimer(seconds) {
   timerInterval = setInterval(() => {
     remaining--;
     render();
+    sendState();
 
     if (remaining <= 0) {
       clearInterval(timerInterval);
-      timer.textContent = "終了";
-      document.getElementById("currentTrial").textContent = "試練終了";
+      setText("trialTimer", "残り時間 終了");
+      setText("timer", "終了");
+      setText("trialTitle", "試練終了");
+      setText("currentTrial", "試練終了");
+      sendState();
     }
   }, 1000);
 }
 
 function showPopup(title, name, text) {
-  const popup = document.getElementById("popup");
+  setText("popupTitle", title);
+  setText("popupName", name);
+  setText("popupText", text);
 
-  document.getElementById("popupTitle").textContent = title;
-  document.getElementById("popupName").textContent = name;
-  document.getElementById("popupText").textContent = text;
+  const popup = document.getElementById("popup");
+  if (!popup) return;
 
   popup.classList.remove("show");
   void popup.offsetWidth;
@@ -125,41 +221,25 @@ function createShootingStar() {
 
   document.body.appendChild(star);
 
-  setTimeout(() => {
-    star.remove();
-  }, 1600);
+  setTimeout(() => star.remove(), 1600);
 }
 
-function smallGift() {
-  const name = getName();
+function smallGift(name = "月の民") {
   const trial = randomPick(smallTrials);
-
   setTrial(trial);
 
-  showPopup(
-    "🌙 月の囁き",
-    name,
-    "小試練が発動\n" + trial.text
-  );
+  showPopup("🌙 月の囁き", name, "小試練が発動\n" + trial.text);
 }
 
-function mediumGift() {
-  const name = getName();
+function mediumGift(name = "月の民") {
   const trial = randomPick(mediumTrials);
-
   setTrial(trial);
   flashMoon();
 
-  showPopup(
-    "🔔 月の試練",
-    name,
-    "月が強く輝いた\n" + trial.text
-  );
+  showPopup("🔔 月の試練", name, "月が強く輝いた\n" + trial.text);
 }
 
-function largeGift() {
-  const name = getName();
-
+function largeGift(name = "月の民") {
   createShootingStar();
   setTimeout(createShootingStar, 250);
   setTimeout(createShootingStar, 500);
@@ -167,21 +247,22 @@ function largeGift() {
   showRoulette(name);
 }
 
-function godGift() {
-  const name = getName();
-
+function godGift(name = "月の民") {
   moonGod = name;
   playGodScene(name);
 
   setTimeout(() => {
-    document.getElementById("moonGodName").textContent = moonGod;
-    document.getElementById("moonGodBoard").classList.add("show");
+    setText("moonGodName", moonGod);
+    const board = document.getElementById("moonGodBoard");
+    if (board) board.classList.add("show");
+    sendState();
   }, 6200);
 }
 
 function showRoulette(name) {
   const roulette = document.getElementById("roulette");
   const rouletteText = document.getElementById("rouletteText");
+  if (!roulette || !rouletteText) return;
 
   roulette.classList.remove("show");
   void roulette.offsetWidth;
@@ -215,11 +296,13 @@ function playGodScene(name) {
   const scene = document.getElementById("godScene");
   const sceneName = document.getElementById("godSceneName");
 
-  sceneName.textContent = name;
+  if (sceneName) sceneName.textContent = name;
 
-  scene.classList.remove("show");
-  void scene.offsetWidth;
-  scene.classList.add("show");
+  if (scene) {
+    scene.classList.remove("show");
+    void scene.offsetWidth;
+    scene.classList.add("show");
+  }
 
   createGodParticles();
 }
@@ -235,9 +318,7 @@ function createGodParticles() {
 
       document.body.appendChild(particle);
 
-      setTimeout(() => {
-        particle.remove();
-      }, 2600);
+      setTimeout(() => particle.remove(), 2600);
     }, i * 36);
   }
 }
@@ -252,89 +333,18 @@ function fullMoonEvent() {
   );
 }
 
-function showGiftWindow() {
-  const giftWindow = document.getElementById("giftWindow");
-  if (!giftWindow) return;
+function executeCommand(command) {
+  const name = command.name || "月の民";
 
-  giftWindow.classList.remove("show");
-  void giftWindow.offsetWidth;
-  giftWindow.classList.add("show");
-}
-
-function createAmbientStars() {
-  const layer = document.getElementById("ambientStars");
-  if (!layer) return;
-
-  layer.innerHTML = "";
-
-  for (let i = 0; i < 75; i++) {
-    const star = document.createElement("div");
-    star.className = "star-dot";
-
-    star.style.left = Math.random() * window.innerWidth + "px";
-    star.style.top = Math.random() * window.innerHeight + "px";
-    star.style.animationDelay = Math.random() * 3 + "s";
-    star.style.animationDuration = 2.5 + Math.random() * 2.8 + "s";
-
-    layer.appendChild(star);
-  }
-}
-
-function createMoonOrb() {
-  const layer = document.getElementById("moonParticles");
-  if (!layer) return;
-
-  const orb = document.createElement("div");
-  orb.className = "moon-orb";
-
-  const centerX = window.innerWidth / 2;
-
-  orb.style.left = centerX - 45 + Math.random() * 90 + "px";
-  orb.style.top = 70 + Math.random() * 140 + "px";
-  orb.style.animationDuration = 3 + Math.random() * 2 + "s";
-
-  layer.appendChild(orb);
-
-  setTimeout(() => {
-    orb.remove();
-  }, 5200);
-}
-
-function createAmbientShootingStar() {
-  if (Math.random() > 0.45) return;
-
-  createShootingStar();
-}
-
-function startAmbientEffects() {
-  createAmbientStars();
-
-  setInterval(createMoonOrb, 760);
-  setInterval(createAmbientShootingStar, 5200);
-}
-
-window.addEventListener("storage", (event) => {
-  if (event.key !== "moonliveCommand") return;
-
-  const command = JSON.parse(event.newValue);
-  if (!command) return;
-
-  executeControlCommand(command);
-});
-
-function executeControlCommand(command) {
-  window.controlName = command.name || "月の民";
-
-  if (command.type === "smallGift") smallGift();
-  if (command.type === "mediumGift") mediumGift();
-  if (command.type === "largeGift") largeGift();
-  if (command.type === "godGift") godGift();
+  if (command.type === "smallGift") smallGift(name);
+  if (command.type === "mediumGift") mediumGift(name);
+  if (command.type === "largeGift") largeGift(name);
+  if (command.type === "godGift") godGift(name);
   if (command.type === "addFragments") addFragments(10);
   if (command.type === "resetMoon") resetMoon();
-  if (command.type === "showGift") showGiftWindow();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  updateGauge();
-  startAmbientEffects();
+  updateGauge(false);
+  connectSocket();
 });

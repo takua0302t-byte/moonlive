@@ -1,113 +1,141 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>MoonLive Control</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #080b20;
-      color: white;
-      font-family: "Yu Gothic", sans-serif;
-    }
+<meta charset="UTF-8">
+<title>MoonLive Control</title>
 
-    .panel {
-      width: 380px;
-      padding: 18px;
-      border-radius: 18px;
-      background: #111735;
-      border: 1px solid rgba(255, 220, 130, 0.6);
-      box-shadow: 0 0 24px rgba(255, 220, 120, 0.25);
-    }
+<style>
+body{
+    background:#070b1b;
+    color:white;
+    font-family:Yu Gothic;
+    margin:0;
+    padding:25px;
+}
 
-    h1 {
-      font-size: 24px;
-      color: #fff0a8;
-      margin-top: 0;
-    }
+.panel{
+    width:380px;
+    margin:auto;
+    background:#11172d;
+    padding:20px;
+    border-radius:18px;
+    border:1px solid rgba(255,220,120,.5);
+}
 
-    input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
+h1{
+    text-align:center;
+    color:#ffe788;
+}
 
-    button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 9px;
-      border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      background: linear-gradient(90deg, #fff3ad, #d9bb62);
-      color: #17132c;
-    }
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:none;
+    box-sizing:border-box;
+}
 
-    .row {
-      display: flex;
-      gap: 8px;
-    }
+button{
+    width:100%;
+    margin-top:8px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
 
-    .row button {
-      width: 50%;
-    }
+.small{background:#6ca7ff;}
+.medium{background:#8f7cff;}
+.large{background:#ffd86b;}
+.god{
+    background:linear-gradient(90deg,#fff6b0,#ffd14a);
+}
 
-    .gift-btn {
-      background: linear-gradient(90deg, #b9d7ff, #8f8cff);
-    }
+.other{
+    background:#dddddd;
+}
+</style>
 
-    .note {
-      margin-top: 14px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
-      line-height: 1.6;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="panel">
-    <h1>🌕 MoonLive Control</h1>
 
-    <input id="giverName" type="text" placeholder="贈り主の名前">
+<div class="panel">
 
-    <button onclick="sendCommand('smallGift')">🌙 小ギフト</button>
-    <button onclick="sendCommand('mediumGift')">🔔 中ギフト</button>
-    <button onclick="sendCommand('largeGift')">⭐ 大ギフト</button>
-    <button onclick="sendCommand('godGift')">👑 特大ギフト</button>
+<h1>🌕 MoonLive Control</h1>
 
-    <button class="gift-btn" onclick="sendCommand('showGift')">🎁 ギフト表を表示</button>
+<input
+id="giverName"
+placeholder="ギフト送信者の名前">
 
-    <div class="row">
-      <button onclick="sendCommand('addFragments')">欠片 +10</button>
-      <button onclick="sendCommand('resetMoon')">リセット</button>
-    </div>
+<button class="small"
+onclick="gift('smallGift')">
+🌙 小ギフト
+</button>
 
-    <div class="note">
-      配信画面：index.html<br>
-      操作画面：control.html<br>
-      両方を同じブラウザで開いて使う。
-    </div>
-  </div>
+<button class="medium"
+onclick="gift('mediumGift')">
+🌕 中ギフト
+</button>
 
-  <script>
-    function sendCommand(type) {
-      const name = document.getElementById("giverName").value.trim() || "月の民";
+<button class="large"
+onclick="gift('largeGift')">
+⭐ 大ギフト
+</button>
 
-      const command = {
-        type: type,
-        name: name,
-        time: Date.now()
-      };
+<button class="god"
+onclick="gift('godGift')">
+👑 月神降臨
+</button>
 
-      localStorage.setItem("moonliveCommand", JSON.stringify(command));
-    }
-  </script>
+<hr>
+
+<button class="other"
+onclick="gift('addFragments')">
+欠片＋10
+</button>
+
+<button class="other"
+onclick="gift('resetMoon')">
+リセット
+</button>
+
+</div>
+
+<script>
+
+const socket=new WebSocket("ws://localhost:3000");
+
+socket.onopen=()=>{
+
+console.log("Connected");
+
+}
+
+function gift(type){
+
+const name=document.getElementById("giverName").value||"月の民";
+
+socket.send(JSON.stringify({
+
+type:"command",
+
+command:{
+
+type:type,
+
+name:name
+
+}
+
+}));
+
+}
+
+</script>
+
 </body>
 </html>
