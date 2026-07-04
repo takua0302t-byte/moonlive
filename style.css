@@ -766,10 +766,23 @@ body {
 }
 
 .fragment-hud {
-  left: calc(50% - 300px) !important;
+  left: 40px !important;
   bottom: 120px !important;
   width: 260px !important;
 }
+
+.trial-hud {
+  right: 40px !important;
+  bottom: 120px !important;
+  width: 260px !important;
+}
+
+.moon-god-board {
+  right: 40px !important;
+  top: 90px !important;
+}
+
+
 
 .trial-hud {
   right: calc(50% - 300px) !important;
