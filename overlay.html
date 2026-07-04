@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Moon Bar</title>
+<style>
+html, body {
+  margin: 0;
+  background: transparent;
+  font-family: "Yu Gothic", sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+.moon-box {
+  width: 620px;
+  padding: 18px 22px;
+  background: rgba(5, 8, 28, 0.92);
+  border: 2px solid #d8c27a;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow:
+    0 0 18px rgba(170, 140, 255, 0.45),
+    0 0 28px rgba(255, 230, 140, 0.25);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-shadow: 0 0 12px rgba(255,255,255,0.8);
+}
+
+.phase {
+  font-size: 18px;
+  color: #fff3a3;
+  margin-bottom: 14px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.orb {
+  font-size: 20px;
+  filter: drop-shadow(0 0 8px rgba(255,230,140,.8));
+}
+
+.bar {
+  flex: 1;
+  height: 28px;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.15);
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6fa8ff, #b98cff, #fff3a3);
+  box-shadow:
+    0 0 16px rgba(255,243,163,0.8),
+    0 0 26px rgba(160,140,255,0.45);
+  transition: width 0.45s ease;
+}
+
+.count {
+  margin-top: 14px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #fff3a3;
+  text-shadow: 0 0 14px rgba(255,243,163,0.75);
+}
+
+.remain {
+  margin-top: 8px;
+  font-size: 18px;
+  color: #dfe7ff;
+}
+
+.fullmoon-message {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 243, 163, 0.8);
+  border-radius: 14px;
+  color: #fff3a3;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  background: rgba(255,255,255,0.08);
+  text-shadow: 0 0 16px rgba(255,243,163,0.9);
+}
+
+.fullmoon-message.show {
+  display: block;
+}
+
+.moon-box.fullmoon-mode {
+  animation: fullmoonGlow 1.3s ease-in-out infinite alternate;
+}
+
+.moon-box.fullmoon-mode .fill {
+  background: linear-gradient(90deg, #ffffff, #fff3a3, #ffffff);
+  box-shadow: 0 0 24px #fff3a3;
+}
+
+.flash {
+  animation: flashMoon 1.2s ease-in-out 3;
+}
+
+@keyframes flashMoon {
+  0% { box-shadow: 0 0 18px rgba(170,140,255,.45); }
+  50% {
+    box-shadow:
+      0 0 48px rgba(255,243,163,1),
+      0 0 90px rgba(255,243,163,.65);
+    transform: scale(1.03);
+  }
+  100% { box-shadow: 0 0 18px rgba(170,140,255,.45); }
+}
+
+@keyframes fullmoonGlow {
+  from {
+    box-shadow:
+      0 0 20px rgba(255,243,163,.45),
+      0 0 34px rgba(170,140,255,.45);
+  }
+  to {
+    box-shadow:
+      0 0 42px rgba(255,243,163,.9),
+      0 0 80px rgba(255,220,120,.55);
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="moon-box" id="moonBox">
+  <div class="title">🌙 神楽ノ夜</div>
+  <div class="phase" id="phase">月齢：🌑 新月</div>
+
+  <div class="bar-row">
+    <span class="orb">🌑</span>
+    <div class="bar">
+      <div class="fill" id="fill"></div>
+    </div>
+    <span class="orb">🌕</span>
+  </div>
+
+  <div class="count">
+    <span id="moonCount">0</span> / <span id="maxMoon">500</span>
+  </div>
+
+  <div class="remain" id="remain">あと500個で満月</div>
+
+  <div class="fullmoon-message" id="fullmoonMessage">
+    🌕 満月到来<br>神楽降臨
+  </div>
+</div>
+
+<script>
+let state = {
+  moon: 0,
+  maxMoon: 500
+};
+
+let wasFull = false;
+
+const fill = document.getElementById("fill");
+const moonCount = document.getElementById("moonCount");
+const maxMoon = document.getElementById("maxMoon");
+const phase = document.getElementById("phase");
+const remain = document.getElementById("remain");
+const moonBox = document.getElementById("moonBox");
+const fullmoonMessage = document.getElementById("fullmoonMessage");
+
+function getPhase(moon, max) {
+  const p = moon / max;
+
+  if (p >= 1) return "🌕 満月";
+  if (p >= 0.75) return "🌔 十三夜";
+  if (p >= 0.5) return "🌓 半月";
+  if (p >= 0.25) return "🌒 三日月";
+  return "🌑 新月";
+}
+
+function render() {
+  const moon = state.moon || 0;
+  const max = state.maxMoon || 500;
+  const percent = Math.min(100, (moon / max) * 100);
+
+  fill.style.width = percent + "%";
+  moonCount.textContent = moon;
+  maxMoon.textContent = max;
+  phase.textContent = "月齢：" + getPhase(moon, max);
+
+  remain.textContent =
+    moon >= max ? "🌕 満月到来" : `あと${max - moon}個で満月`;
+
+  if (moon >= max) {
+    moonBox.classList.add("fullmoon-mode");
+    fullmoonMessage.classList.add("show");
+  } else {
+    moonBox.classList.remove("fullmoon-mode");
+    fullmoonMessage.classList.remove("show");
+  }
+
+  if (moon >= max && !wasFull) {
+    moonBox.classList.remove("flash");
+    void moonBox.offsetWidth;
+    moonBox.classList.add("flash");
+  }
+
+  wasFull = moon >= max;
+}
+
+const events = new EventSource("/events");
+
+events.onmessage = (event) => {
+  state = JSON.parse(event.data);
+  render();
+};
+
+render();
+</script>
+</body>
+</html>

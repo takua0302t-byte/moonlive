@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>MoonLive Control</title>
+<style>
+  body {
+    background: #101020;
+    color: white;
+    font-family: "Yu Gothic", sans-serif;
+    padding: 24px;
+  }
+
+  button {
+    padding: 12px 18px;
+    margin: 6px;
+    border: none;
+    border-radius: 10px;
+    background: #d8c27a;
+    color: #101020;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  input {
+    padding: 10px;
+    margin: 6px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🌙 MoonLive Control</h1>
+
+<h2>月の欠片</h2>
+<button onclick="send('/add?amount=1')">欠片 +1</button>
+<button onclick="send('/add?amount=10')">月詠み +10</button>
+<button onclick="send('/add?amount=20')">シェア +20</button>
+<button onclick="send('/reset')">夜を明ける</button>
+
+<h2>試練タイマー</h2>
+<input id="trialName" placeholder="試練名">
+<input id="trialSeconds" type="number" value="180">
+<button onclick="startTrial()">試練開始</button>
+<button onclick="clearTrial()">試練終了</button>
+
+<script>
+function startTrial() {
+  const name = document.getElementById("trialName").value || "試練";
+  const seconds = Number(document.getElementById("trialSeconds").value || 180);
+
+  fetch(`/startTrial?name=${encodeURIComponent(name)}&seconds=${seconds}`);
+}
+
+function clearTrial() {
+  fetch("/clearTrial");
+}
+</script>
+<script>
+function addMoon(amount) {
+  fetch(`/add?amount=${amount}`);
+}
+
+function resetMoon() {
+  fetch("/reset");
+}
+
+function startTrial() {
+  const nameInput = document.querySelector('input[placeholder], input[type="text"]');
+  const numberInput = document.querySelector('input[type="number"]');
+
+  const name = nameInput ? nameInput.value : "試練";
+  const seconds = numberInput ? numberInput.value : 180;
+
+  fetch(`/startTrial?name=${encodeURIComponent(name)}&seconds=${seconds}`);
+}
+
+function clearTrial() {
+  fetch("/clearTrial");
+}
+</script>
+
+
+</body>
+</html>

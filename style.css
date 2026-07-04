@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  background: transparent;
+  color: #fff;
+  font-family: "Yu Gothic", sans-serif;
+}
+
+.moon-box {
+  width: 420px;
+  padding: 18px;
+  background: rgba(8, 12, 35, 0.85);
+  border: 2px solid #d8c27a;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 0 18px rgba(170, 140, 255, 0.5);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.moon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar {
+  flex: 1;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #5b7cff, #b388ff, #fff3a3);
+  border-radius: 999px;
+  transition: width 0.8s ease;
+  box-shadow: 0 0 14px #fff3a3;
+}
+
+.count {
+  margin-top: 10px;
+  font-size: 22px;
+  color: #fff3a3;
+}
+
+.buttons {
+  margin-top: 14px;
+}
+
+button {
+  padding: 6px 12px;
+  margin: 4px;
+  border: none;
+  border-radius: 8px;
+  background: #d8c27a;
+  color: #101020;
+  font-weight: bold;
+  cursor: pointer;
+}
+.phase {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #fff3a3;
+  letter-spacing: 1px;
+}

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>MoonLive Legendary Effect</title>
+<style>
+  .moon-god-card {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  animation: moonGodIn .9s ease 5.8s forwards;
+  transform: translateX(-50%) translateY(30px) scale(.96);
+  min-width: 420px;
+  padding: 22px 34px;
+  text-align: center;
+  border: 1px solid rgba(255, 238, 150, .9);
+  border-radius: 24px;
+  background: rgba(5, 8, 28, .66);
+  box-shadow:
+    0 0 24px rgba(255, 230, 140, .45),
+    inset 0 0 28px rgba(255, 255, 255, .08);
+  opacity: 0;
+  color: #fff8c8;
+  font-weight: bold;
+  animation: moonGodIn .9s ease 5s forwards;
+}
+
+.god-label {
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 18px #fff3a3;
+}
+
+.god-name {
+  font-size: 46px;
+  color: #fff2a3;
+  margin-bottom: 12px;
+  text-shadow:
+    0 0 18px white,
+    0 0 50px gold,
+    0 0 90px #ffd84d;
+}
+
+.god-message {
+  font-size: 24px;
+  line-height: 1.6;
+  color: #ffffff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 18px rgba(255,255,255,.9);
+}
+
+@keyframes moonGodIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(34px) scale(.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Yu Gothic", sans-serif;
+}
+
+#effect {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .8s ease;
+}
+
+#effect.show {
+  opacity: 1;
+}
+
+.night {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,225,120,.25), transparent 28%),
+    linear-gradient(120deg, rgba(30,120,160,.78), rgba(95,55,165,.75), rgba(10,40,70,.78));
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.8) 1px, transparent 2px),
+    radial-gradient(circle, rgba(255,230,120,.7) 1px, transparent 2px);
+  background-size: 90px 90px, 140px 140px;
+  animation: starMove 8s linear infinite;
+}
+
+.moon-wrap {
+  position: absolute;
+  top: -2%;
+  left: 50%;
+  width: 760px;
+  height: 760px;
+  transform: translateX(-50%) scale(.7);
+  opacity: 0;
+  animation: moonArrive 6.8s ease forwards;
+}
+
+.moon-aura {
+  position: absolute;
+  inset: -85px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255,245,170,.95) 0%,
+    rgba(255,210,80,.55) 34%,
+    rgba(255,190,50,.25) 55%,
+    transparent 78%);
+  filter: blur(22px);
+  animation: auraPulse 2.4s ease-in-out infinite alternate;
+}
+
+.moon-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+  drop-shadow(0 0 30px #fff3a3)
+  drop-shadow(0 0 90px #ffd84d)
+  drop-shadow(0 0 190px rgba(255,220,90,1))
+  drop-shadow(0 0 260px rgba(255,190,60,.65));
+}
+
+.moon-beam {
+  position: absolute;
+  top: 27%;
+  left: 50%;
+  width: 260px;
+  height: 66%;
+  transform: translateX(-50%) scaleY(.2);
+  transform-origin: top center;
+  background: linear-gradient(
+    180deg,
+    rgba(255,250,210,.9),
+    rgba(255,230,120,.38),
+    rgba(180,230,255,.18),
+    transparent
+  );
+  filter: blur(28px);
+  opacity: 0;
+  animation: beamDrop 6.8s ease forwards;
+}
+
+.center {
+  animation: centerFadeOut 1s ease 5.2s forwards;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  font-weight: bold;
+  color: #fff5bc;
+  text-shadow:
+    0 0 18px #fff,
+    0 0 55px #ffe680,
+    0 0 120px #ffd84d;
+}
+
+.main-text {
+  margin-top: 400px;
+  font-size: 82px;
+  letter-spacing: 5px;
+  opacity: 0;
+  animation: textIn .8s ease 1.3s forwards, textGlow 1.8s ease-in-out infinite alternate;
+}
+
+.sub-text {
+  margin-top: 22px;
+  font-size: 42px;
+  letter-spacing: 8px;
+  color: #fff;
+  opacity: 0;
+  animation: textIn .8s ease 2.1s forwards;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff8c8;
+  box-shadow: 0 0 12px #fff0a3;
+  animation: particleMove linear forwards;
+}
+
+.star {
+  position: absolute;
+  width: 180px;
+  height: 2px;
+  background: linear-gradient(90deg, white, transparent);
+  filter: drop-shadow(0 0 12px white);
+  transform: rotate(-25deg);
+  animation: shooting 1.2s ease-out forwards;
+}
+
+@keyframes moonArrive {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-120px) scale(.25);
+    filter: blur(8px);
+  }
+  35% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1.05);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes moonFloat {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes auraPulse {
+  from { opacity: .65; transform: scale(.95); }
+  to { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes beamDrop {
+  0%, 28% {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(.15);
+  }
+  45% {
+    opacity: .9;
+    transform: translateX(-50%) scaleY(1);
+  }
+  100% {
+    opacity: .55;
+    transform: translateX(-50%) scaleY(1);
+  }
+}
+
+@keyframes textIn {
+  from {
+    opacity: 0;
+    transform: translateY(35px) scale(.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes textGlow {
+  from {
+    text-shadow: 0 0 18px #fff, 0 0 45px #ffe680;
+  }
+  to {
+    text-shadow: 0 0 28px #fff, 0 0 90px #ffe680, 0 0 160px #ffd84d;
+  }
+}
+
+@keyframes particleMove {
+  from {
+    opacity: 0;
+    transform: translateY(0) scale(.5);
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-330px) scale(1.4);
+  }
+}
+
+@keyframes shooting {
+  from {
+    opacity: 0;
+    transform: translateX(0) translateY(0) rotate(-25deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-620px) translateY(280px) rotate(-25deg);
+  }
+}
+
+@keyframes starMove {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 100px 120px, -140px 100px; }
+}
+@keyframes centerFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(.96);
+  }
+}
+
+</style>
+</head>
+
+<body>
+<div id="effect">
+  <div class="night"></div>
+  <div class="stars"></div>
+  <div id="particles"></div>
+
+  <div class="moon-beam"></div>
+
+  <div class="moon-wrap">
+    <div class="moon-aura"></div>
+    <img src="./moon.png" class="moon-img">
+  </div>
+
+  <div class="center">
+    <div class="main-text">満月到来</div>
+    <div class="sub-text">神楽降臨</div>
+  </div>
+  <div class="moon-god-card" id="moonGodCard">
+  <div class="god-label">🌕 今宵の月神</div>
+  <div class="god-name" id="moonGodName">月の民</div>
+  <div class="god-message">
+  月神の加護が<br>
+  夜空を満たした
+</div>
+</div>
+</div>
+<script>
+const effect = document.getElementById("effect");
+const particles = document.getElementById("particles");
+const moonGodName = document.getElementById("moonGodName");
+
+let wasFull = false;
+
+function createParticles() {
+  particles.innerHTML = "";
+
+  for (let i = 0; i < 180; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.top = 30 + Math.random() * 70 + "%";
+    p.style.animationDelay = Math.random() * 2.5 + "s";
+    p.style.animationDuration = 3 + Math.random() * 3 + "s";
+    particles.appendChild(p);
+  }
+
+  for (let i = 0; i < 8; i++) {
+    const s = document.createElement("div");
+    s.className = "star";
+    s.style.left = 60 + Math.random() * 40 + "%";
+    s.style.top = 5 + Math.random() * 45 + "%";
+    s.style.animationDelay = .4 + Math.random() * 2.5 + "s";
+    particles.appendChild(s);
+  }
+}
+
+function playFullmoonEffect() {
+  createParticles();
+
+  effect.classList.remove("show");
+  void effect.offsetWidth;
+  effect.classList.add("show");
+
+  setTimeout(() => {
+    effect.classList.remove("show");
+  }, 11000);
+}
+
+const events = new EventSource("/events");
+
+events.onmessage = (e) => {
+  const state = JSON.parse(e.data);
+
+  if (moonGodName) {
+    moonGodName.textContent = state.moonGod || "月の民";
+  }
+
+  if (state.moon >= state.maxMoon && !wasFull) {
+    playFullmoonEffect();
+  }
+
+  wasFull = state.moon >= state.maxMoon;
+};
+
+if (location.search.includes("test=1")) {
+  setTimeout(playFullmoonEffect, 300);
+}
+</script>
+</body>
+</html>

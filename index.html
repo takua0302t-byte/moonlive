@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>MoonLive</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="moon-box">
+    <div class="title">🌙 神楽ノ夜</div>
+    <div class="phase">🌑 新月 → 🌒 三日月 → 🌓 半月 → 🌕 満月</div>
+
+
+    <div class="moon-row">
+      <span>🌑</span>
+      <div class="bar">
+        <div class="fill" id="fill"></div>
+      </div>
+      <span>🌕</span>
+    </div>
+
+    <div class="count">
+      <span id="moonCount">245</span> / 500
+    </div>
+
+    <div class="buttons">
+      <button onclick="addMoon(1)">欠片+1</button>
+<button onclick="addMoon(10)">月詠み+10</button>
+<button onclick="resetMoon()">夜が明ける</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

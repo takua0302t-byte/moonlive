@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>MoonLive Gift System</title>
+
+<style>
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+    color: white;
+  }
+
+  /* 表示エリア */
+  #giftLayer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* 月 */
+  #moon {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, #f7f1c8 45%, #d6c36a 75%, rgba(255,255,255,0) 100%);
+    box-shadow: 0 0 40px #fff6b0, 0 0 90px #d8c46a;
+    opacity: 0.9;
+    transition: all 0.5s ease;
+  }
+
+  .moon-flash {
+    animation: moonFlash 1.4s ease-out;
+  }
+
+  @keyframes moonFlash {
+    0% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+    35% { transform: translateX(-50%) scale(1.25); filter: brightness(2.3); box-shadow: 0 0 80px #fff, 0 0 180px #ffe777; }
+    100% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+  }
+
+  .god-moon {
+    animation: godMoon 5s ease-out forwards;
+  }
+
+  @keyframes godMoon {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.4); }
+    25% { opacity: 1; transform: translateX(-50%) scale(2.3); }
+    70% { opacity: 1; transform: translateX(-50%) scale(2.6); }
+    100% { opacity: 0; transform: translateX(-50%) scale(3); }
+  }
+
+  /* ギフトカード */
+  #giftCard {
+    position: absolute;
+    top: 34%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 26px 46px;
+    border-radius: 24px;
+    background: rgba(10, 14, 35, 0.82);
+    border: 2px solid rgba(255, 235, 160, 0.8);
+    box-shadow: 0 0 35px rgba(255, 220, 120, 0.6);
+    text-align: center;
+    opacity: 0;
+  }
+
+  #giftTitle {
+    font-size: 34px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  #giftUser {
+    font-size: 28px;
+    color: #ffe88a;
+    margin-bottom: 8px;
+  }
+
+  #giftText {
+    font-size: 22px;
+    line-height: 1.6;
+  }
+
+  .show-card {
+    animation: showCard 4.2s ease forwards;
+  }
+
+  @keyframes showCard {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+    15% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    25% { transform: translateX(-50%) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* 流れ星 */
+  .shooting-star {
+    position: absolute;
+    width: 160px;
+    height: 3px;
+    background: linear-gradient(90deg, white, rgba(255,255,255,0));
+    top: 20%;
+    left: -200px;
+    transform: rotate(-20deg);
+    filter: drop-shadow(0 0 8px white);
+    animation: shootingStar 1.4s ease-out forwards;
+  }
+
+  @keyframes shootingStar {
+    0% { left: -200px; opacity: 0; }
+    20% { opacity: 1; }
+    100% { left: 120%; top: 55%; opacity: 0; }
+  }
+
+  /* ルーレット */
+  #roulette {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    padding: 22px;
+    border-radius: 22px;
+    background: rgba(8, 10, 30, 0.9);
+    border: 2px solid rgba(160, 210, 255, 0.8);
+    box-shadow: 0 0 35px rgba(100, 180, 255, 0.55);
+    text-align: center;
+    opacity: 0;
+  }
+
+  #rouletteText {
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .show-roulette {
+    animation: rouletteShow 5s ease forwards;
+  }
+
+  @keyframes rouletteShow {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+    15% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-50%) scale(1); }
+  }
+
+  /* 月神名前掲示 */
+  #moonGodBoard {
+    position: absolute;
+    top: 6%;
+    right: 4%;
+    padding: 18px 26px;
+    border-radius: 18px;
+    background: rgba(20, 12, 40, 0.85);
+    border: 2px solid gold;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    text-align: center;
+    opacity: 0;
+  }
+
+  #moonGodBoard.show {
+    opacity: 1;
+  }
+
+  #moonGodName {
+    font-size: 26px;
+    color: #ffe66d;
+    font-weight: bold;
+  }
+
+  /* 操作パネル */
+  #controlPanel {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    width: 280px;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(0,0,0,0.7);
+    pointer-events: auto;
+  }
+
+  #controlPanel input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  #controlPanel button {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+<div id="giftGuide">
+  <div class="guideTitle">🎁 月夜のギフト</div>
+
+  <div class="guideItem">
+    <span>🌙 小ギフト</span>
+    <p>小試練発動</p>
+  </div>
+
+  <div class="guideItem">
+    <span>🌕 中ギフト</span>
+    <p>中試練＋月光演出</p>
+  </div>
+
+  <div class="guideItem">
+    <span>⭐ 大ギフト</span>
+    <p>ルーレット＋流れ星</p>
+  </div>
+
+  <div class="guideItem">
+    <span>👑 超大ギフト</span>
+    <p>月神降臨＋名前掲示</p>
+  </div>
+</div>
+</head>
+
+<body>
+
+<div id="giftLayer">
+  <div id="moon"></div>
+
+  <div id="giftCard">
+    <div id="giftTitle"></div>
+    <div id="giftUser"></div>
+    <div id="giftText"></div>
+  </div>
+
+  <div id="roulette">
+    <div id="rouletteText">試練を選定中...</div>
+  </div>
+
+  <div id="moonGodBoard">
+    <div>今宵の月神</div>
+    <div id="moonGodName">---</div>
+  </div>
+</div>
+<div id="giftGuide">
+  <div class="guideTitle">🎁 月夜のギフト</div>
+
+  <div class="guideItem">
+    <span>🌙 小ギフト</span>
+    <p>小試練発動</p>
+  </div>
+
+  <div class="guideItem">
+    <span>🌕 中ギフト</span>
+    <p>中試練＋月光演出</p>
+  </div>
+
+  <div class="guideItem">
+    <span>⭐ 大ギフト</span>
+    <p>ルーレット＋流れ星</p>
+  </div>
+
+  <div class="guideItem">
+    <span>👑 超大ギフト</span>
+    <p>月神降臨＋名前掲示</p>
+  </div>
+</div>
+
+<div id="controlPanel">
+  <input id="userNameInput" placeholder="贈り主の名前" />
+
+  <button onclick="triggerSmallGift()">🌙 小ギフト：小試練</button>
+  <button onclick="triggerMediumGift()">🌕 中ギフト：中試練＋月光</button>
+  <button onclick="triggerLargeGift()">⭐ 大ギフト：ルーレット＋流れ星</button>
+  <button onclick="triggerGodGift()">👑 超大ギフト：月神降臨</button>
+</div>
+
+<audio id="bellSound">
+  <source src="bell.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const smallTrials = [
+    "30秒間、片手操作",
+    "次のチェイスは無言",
+    "10秒間その場で待機",
+    "次の判断はコメントに従う",
+    "1分間、強気プレイ"
+  ];
+
+  const mediumTrials = [
+    "1分間、低感度プレイ",
+    "次の試合で救助優先",
+    "60秒間、索敵禁止",
+    "1分間、徒歩縛り",
+    "次のチェイスで板温存"
+  ];
+
+  const rouletteTrials = [
+    "片手プレイ 60秒",
+    "コメント命令 1回",
+    "救助最優先",
+    "チェイス縛り",
+    "月神の選択",
+    "ノーリアクション縛り",
+    "全力で褒める縛り"
+  ];
+
+  function getUserName() {
+    const input = document.getElementById("userNameInput").value.trim();
+    return input || "月の民";
+  }
+
+  function showGiftCard(title, user, text) {
+    const card = document.getElementById("giftCard");
+    document.getElementById("giftTitle").textContent = title;
+    document.getElementById("giftUser").textContent = user;
+    document.getElementById("giftText").textContent = text;
+
+    card.classList.remove("show-card");
+    void card.offsetWidth;
+    card.classList.add("show-card");
+  }
+
+  function flashMoon() {
+    const moon = document.getElementById("moon");
+    moon.classList.remove("moon-flash");
+    void moon.offsetWidth;
+    moon.classList.add("moon-flash");
+  }
+
+  function createShootingStar() {
+    const star = document.createElement("div");
+    star.className = "shooting-star";
+    star.style.top = Math.random() * 35 + 10 + "%";
+    document.getElementById("giftLayer").appendChild(star);
+
+    setTimeout(() => {
+      star.remove();
+    }, 1600);
+  }
+
+  function showRoulette(user) {
+    const roulette = document.getElementById("roulette");
+    const rouletteText = document.getElementById("rouletteText");
+
+    roulette.classList.remove("show-roulette");
+    void roulette.offsetWidth;
+    roulette.classList.add("show-roulette");
+
+    let count = 0;
+    const interval = setInterval(() => {
+      const randomTrial = rouletteTrials[Math.floor(Math.random() * rouletteTrials.length)];
+      rouletteText.textContent = randomTrial;
+      count++;
+
+      if (count >= 18) {
+        clearInterval(interval);
+        const finalTrial = rouletteTrials[Math.floor(Math.random() * rouletteTrials.length)];
+        rouletteText.textContent = "決定：" + finalTrial;
+
+        showGiftCard(
+          "⭐ 大ギフト",
+          user,
+          "流れ星が夜空を駆けた\n試練：" + finalTrial
+        );
+      }
+    }, 120);
+  }
+
+  function triggerSmallGift() {
+    const user = getUserName();
+    const trial = smallTrials[Math.floor(Math.random() * smallTrials.length)];
+
+    showGiftCard(
+      "🌙 小ギフト",
+      user,
+      "小試練が発動\n試練：" + trial
+    );
+
+    updateCurrentTrial(trial);
+  }
+
+  function triggerMediumGift() {
+    const user = getUserName();
+    const trial = mediumTrials[Math.floor(Math.random() * mediumTrials.length)];
+
+    flashMoon();
+
+    showGiftCard(
+      "🌕 中ギフト",
+      user,
+      "月が強く輝いた\n中試練：" + trial
+    );
+
+    updateCurrentTrial(trial);
+  }
+
+  function triggerLargeGift() {
+    const user = getUserName();
+
+    createShootingStar();
+    setTimeout(createShootingStar, 250);
+    setTimeout(createShootingStar, 500);
+
+    showRoulette(user);
+  }
+
+  function triggerGodGift() {
+    const user = getUserName();
+
+    const moon = document.getElementById("moon");
+    moon.classList.remove("god-moon");
+    void moon.offsetWidth;
+    moon.classList.add("god-moon");
+
+    document.getElementById("moonGodName").textContent = user;
+    document.getElementById("moonGodBoard").classList.add("show");
+
+    showGiftCard(
+      "👑 月神降臨",
+      user,
+      "月神の加護が\n夜空を満たした"
+    );
+
+    playBell();
+  }
+
+  function playBell() {
+    const bell = document.getElementById("bellSound");
+    if (bell) {
+      bell.currentTime = 0;
+      bell.play().catch(() => {});
+    }
+  }
+
+  /*
+    既存の試練表示と連携する場所。
+    ここを今のMoonLive本体の関数名に合わせればOK。
+  */
+  function updateCurrentTrial(trialName) {
+    console.log("現在の試練:", trialName);
+
+    // 例：
+    // document.getElementById("currentTrial").textContent = trialName;
+
+    // 既存コードに setTrial() があるならこう：
+    // setTrial(trialName);
+  }
+</script>
+
+</body>
+</html>

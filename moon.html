@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Moon Bar</title>
+<style>
+html, body {
+  margin: 0;
+  background: transparent;
+  font-family: "Yu Gothic", sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+.moon-box {
+  width: 620px;
+  padding: 18px 22px;
+  background: rgba(5, 8, 28, 0.92);
+  border: 2px solid #d8c27a;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: 0 0 22px rgba(255,230,140,.35);
+  transition: opacity .45s ease;
+}
+
+.moon-box.hide {
+  opacity: 0;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.phase {
+  font-size: 18px;
+  color: #fff3a3;
+  margin-bottom: 14px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar {
+  flex: 1;
+  height: 28px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6fa8ff, #b98cff, #fff3a3);
+  transition: width .4s ease;
+}
+
+.count {
+  margin-top: 14px;
+  font-size: 30px;
+  font-weight: bold;
+  color: #fff3a3;
+}
+
+.remain {
+  margin-top: 8px;
+  font-size: 18px;
+  color: #dfe7ff;
+}
+</style>
+</head>
+
+<body>
+<div class="moon-box" id="moonBox">
+  <div class="title">🌙 神楽ノ夜</div>
+  <div class="phase" id="phase">月齢：🌑 新月</div>
+
+  <div class="bar-row">
+    <span>🌑</span>
+    <div class="bar">
+      <div class="fill" id="fill"></div>
+    </div>
+    <span>🌕</span>
+  </div>
+
+  <div class="count">
+    <span id="moonCount">0</span> / <span id="maxMoon">500</span>
+  </div>
+
+  <div class="remain" id="remain">あと500個で満月</div>
+</div>
+
+<script>
+let state = { moon: 0, maxMoon: 500 };
+
+const moonBox = document.getElementById("moonBox");
+const fill = document.getElementById("fill");
+const moonCount = document.getElementById("moonCount");
+const maxMoon = document.getElementById("maxMoon");
+const phase = document.getElementById("phase");
+const remain = document.getElementById("remain");
+
+function getPhase(moon, max) {
+  const p = moon / max;
+  if (p >= 1) return "🌕 満月";
+  if (p >= 0.75) return "🌔 十三夜";
+  if (p >= 0.5) return "🌓 半月";
+  if (p >= 0.25) return "🌒 三日月";
+  return "🌑 新月";
+}
+
+function render() {
+  const moon = state.moon || 0;
+  const max = state.maxMoon || 500;
+  const percent = Math.min(100, moon / max * 100);
+
+  fill.style.width = percent + "%";
+  moonCount.textContent = moon;
+  maxMoon.textContent = max;
+  phase.textContent = "月齢：" + getPhase(moon, max);
+  remain.textContent = moon >= max ? "🌕 満月到来" : `あと${max - moon}個で満月`;
+
+  if (moon >= max) {
+    moonBox.classList.add("hide");
+  } else {
+    moonBox.classList.remove("hide");
+  }
+}
+
+const events = new EventSource("/events");
+
+events.onmessage = (event) => {
+  state = JSON.parse(event.data);
+  render();
+};
+
+render();
+</script>
+</body>
+</html>
