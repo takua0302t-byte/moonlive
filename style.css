@@ -129,7 +129,7 @@ body {
 .fragment-hud {
   position: fixed;
   left: 28px;
-  bottom: 28px;
+  top: 24px;
   width: 340px;
   padding: 15px;
   border-radius: 22px;
