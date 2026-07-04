@@ -745,23 +745,39 @@ body {
    HUD位置 最終調整
 ========================= */
 
-.fragment-hud {
-  left: 160px !important;
-  bottom: 100px !important;
-  width: 320px !important;
-}
+/* =========================
+   TikTok縦画面 安全エリア版
+========================= */
 
-.trial-hud {
-  right: 90px !important;
-  bottom: 90px !important;
-  width: 320px !important;
+.moonlive {
+  width: 720px !important;
+  height: 1280px !important;
+  left: 50% !important;
+  top: 0 !important;
+  transform: translateX(-50%) !important;
+  position: fixed !important;
+  overflow: hidden !important;
 }
 
 .top-oracle {
   top: 70px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+.fragment-hud {
+  left: calc(50% - 300px) !important;
+  bottom: 120px !important;
+  width: 260px !important;
+}
+
+.trial-hud {
+  right: calc(50% - 300px) !important;
+  bottom: 120px !important;
+  width: 260px !important;
 }
 
 .moon-god-board {
+  right: calc(50% - 300px) !important;
   top: 90px !important;
-  right: 90px !important;
 }
