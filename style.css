@@ -746,8 +746,8 @@ body {
 ========================= */
 
 .fragment-hud {
-  left: 90px !important;
-  bottom: 90px !important;
+  left: 160px !important;
+  bottom: 100px !important;
   width: 320px !important;
 }
 
