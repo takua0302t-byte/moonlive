@@ -742,55 +742,32 @@ body {
 
 }
 /* =========================
-   HUD位置 最終調整
+   HUD位置 強制修正版
 ========================= */
-
-/* =========================
-   TikTok縦画面 安全エリア版
-========================= */
-
-.moonlive {
-  width: 720px !important;
-  height: 1280px !important;
-  left: 50% !important;
-  top: 0 !important;
-  transform: translateX(-50%) !important;
-  position: fixed !important;
-  overflow: hidden !important;
-}
-
-.top-oracle {
-  top: 70px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
 
 .fragment-hud {
+  position: absolute !important;
   left: 40px !important;
   bottom: 120px !important;
   width: 260px !important;
 }
 
 .trial-hud {
+  position: absolute !important;
   right: 40px !important;
   bottom: 120px !important;
   width: 260px !important;
 }
 
+.top-oracle {
+  position: absolute !important;
+  top: 70px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
 .moon-god-board {
+  position: absolute !important;
+  top: 90px !important;
   right: 40px !important;
-  top: 90px !important;
-}
-
-
-
-.trial-hud {
-  right: calc(50% - 300px) !important;
-  bottom: 120px !important;
-  width: 260px !important;
-}
-
-.moon-god-board {
-  right: calc(50% - 300px) !important;
-  top: 90px !important;
 }
