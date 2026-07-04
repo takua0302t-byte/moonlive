@@ -742,43 +742,35 @@ body {
 
 }
 /* =========================
-   MoonLive 最終配置修正版
+   HUD位置 最終版：中央基準
 ========================= */
 
-.moonlive {
-  width: 720px !important;
-  height: 1280px !important;
-  position: relative !important;
-  margin: 0 auto !important;
-  overflow: hidden !important;
-  transform: none !important;
-  left: auto !important;
-  top: auto !important;
-}
-
 .fragment-hud {
-  position: absolute !important;
-  left: 40px !important;
-  bottom: 120px !important;
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 95px !important;
+  transform: translateX(-360px) !important;
   width: 260px !important;
 }
 
 .trial-hud {
-  position: absolute !important;
-  right: 40px !important;
-  bottom: 120px !important;
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 95px !important;
+  transform: translateX(100px) !important;
   width: 260px !important;
 }
 
 .top-oracle {
-  position: absolute !important;
+  position: fixed !important;
   top: 70px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
 }
 
 .moon-god-board {
-  position: absolute !important;
+  position: fixed !important;
+  left: 50% !important;
   top: 90px !important;
-  right: 40px !important;
+  transform: translateX(100px) !important;
 }
