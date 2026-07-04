@@ -1,776 +1,206 @@
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-body {
+html, body {
   margin: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background: transparent;
-  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", serif;
-  color: #fff;
   overflow: hidden;
+  font-family: "Yu Gothic", sans-serif;
+  color: #fff;
 }
 
 .moonlive {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  margin: 0 auto;
   overflow: hidden;
+  background: transparent;
 }
 
-/* 常時星空 */
-.ambient-stars,
-.moon-particles {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 1;
-}
-
-/* 上中央：月とタイトル */
+/* 上中央 */
 .top-oracle {
-  position: fixed;
-  top: 55px;
+  position: absolute;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
-  width: 380px;
+  width: 360px;
   text-align: center;
   z-index: 10;
 }
 
-.moon-core {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.moon-core::before {
-  content: "";
-  position: absolute;
-  width: 175px;
-  height: 175px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 238, 160, 0.3), transparent 70%);
-  animation: moonAura 4s ease-in-out infinite;
-}
-
-@keyframes moonAura {
-  0%, 100% {
-    transform: scale(0.9);
-    opacity: 0.45;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 1;
-  }
-}
-
 .main-moon {
-  width: 145px;
-  height: 145px;
-  object-fit: contain;
-  position: relative;
-  z-index: 2;
-  filter:
-    drop-shadow(0 0 20px rgba(255, 240, 170, 0.95))
-    drop-shadow(0 0 55px rgba(255, 210, 80, 0.65));
-}
-
-.main-moon.flash {
-  animation: moonFlash 1.25s ease-out;
-}
-
-@keyframes moonFlash {
-  0% {
-    transform: scale(1);
-    filter: brightness(1) drop-shadow(0 0 25px gold);
-  }
-  35% {
-    transform: scale(1.28);
-    filter: brightness(2.4) drop-shadow(0 0 85px #fff1a0);
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1) drop-shadow(0 0 25px gold);
-  }
-}
-
-.brand-title {
-  margin-top: -4px;
+  width: 120px;
+  filter: drop-shadow(0 0 35px gold);
 }
 
 .brand-sub {
-  color: #e8d79a;
+  color: #f5d982;
   font-size: 12px;
-  letter-spacing: 0.22em;
-  text-shadow: 0 0 8px rgba(255, 220, 120, 0.7);
 }
 
 .brand-title h1 {
-  margin: 4px 0 2px;
-  font-size: 31px;
-  letter-spacing: 0.18em;
-  color: #fff7cc;
-  text-shadow:
-    0 0 8px #ffe889,
-    0 0 24px rgba(255, 210, 80, 0.75);
+  margin: 4px 0;
+  color: #ffe98a;
+  font-size: 28px;
+  text-shadow: 0 0 20px gold;
 }
 
 .brand-title p {
   margin: 0;
-  color: #f4df94;
-  font-size: 12px;
-  text-shadow: 0 0 8px rgba(255, 220, 120, 0.6);
+  color: #f5d982;
+  font-size: 11px;
 }
-/* 左下：月の欠片HUD */
+
+/* 左下：月ゲージ */
 .fragment-hud {
-  position: fixed;
-  left: 80px;
-  bottom: 80px;
-  transform: translateX(-110%);
-  width: 340px;
-  padding: 15px;
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(255, 230, 140, 0.18), transparent 38%),
-    rgba(7, 10, 32, 0.88);
-  border: 1px solid rgba(255, 226, 145, 0.65);
-  box-shadow:
-    0 0 28px rgba(255, 220, 120, 0.24),
-    inset 0 0 18px rgba(255,255,255,0.05);
-  z-index: 12;
+  position: absolute;
+  left: 40px;
+  bottom: 105px;
+  width: 260px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(8, 10, 32, 0.9);
+  border: 1px solid rgba(255, 220, 120, 0.8);
+  box-shadow: 0 0 22px rgba(255, 220, 120, 0.35);
+  z-index: 20;
 }
 
 .hud-label {
-  color: #fff1a6;
-  font-size: 15px;
+  color: #ffe98a;
   font-weight: bold;
-  margin-bottom: 9px;
-  text-shadow: 0 0 10px gold;
+  margin-bottom: 8px;
 }
 
 .phase-row {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  color: #fff2a7;
+  font-size: 10px;
+  color: #ffeeb0;
   margin-bottom: 8px;
 }
 
 .gauge {
-  height: 22px;
+  height: 18px;
   border-radius: 999px;
+  background: rgba(255,255,255,0.16);
   overflow: hidden;
-  background: rgba(255,255,255,0.14);
   border: 1px solid rgba(255,255,255,0.35);
 }
 
 .gauge-fill {
-  height: 100%;
   width: 49%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #697cff, #b98cff, #fff1a6);
-  box-shadow: 0 0 20px rgba(255, 240, 170, 0.95);
-  transition: width 0.5s ease;
+  height: 100%;
+  background: linear-gradient(90deg, #6f7cff, #c99cff, #fff0a0);
 }
 
 .fragment-count {
-  margin-top: 7px;
+  margin-top: 8px;
   text-align: center;
-  font-size: 23px;
+  color: #fff383;
+  font-size: 20px;
   font-weight: bold;
-  color: #fff38c;
-  text-shadow: 0 0 12px rgba(255, 230, 100, 0.8);
 }
 
-/* 右下：試練HUD */
+/* 右下：試練 */
 .trial-hud {
-  position: fixed;
-  right: 95px;
-  bottom: 95px;
-  transform: translateX(10%);
-  width: 340px;
-  padding: 16px;
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at 80% 0%, rgba(120, 170, 255, 0.18), transparent 38%),
-    rgba(7, 10, 32, 0.9);
-  border: 1px solid rgba(255, 226, 145, 0.65);
-  box-shadow:
-    0 0 28px rgba(120, 170, 255, 0.24),
-    inset 0 0 18px rgba(255,255,255,0.05);
-  z-index: 12;
+  position: absolute;
+  right: 40px;
+  bottom: 105px;
+  width: 260px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(8, 10, 32, 0.9);
+  border: 1px solid rgba(255, 220, 120, 0.8);
+  box-shadow: 0 0 22px rgba(120, 170, 255, 0.35);
+  z-index: 20;
 }
 
-.trial-name {
-  font-size: 23px;
+.trial-label {
+  color: #ffe98a;
   font-weight: bold;
-  color: #ffffff;
-  text-shadow: 0 0 12px rgba(150, 190, 255, 0.85);
+  margin-bottom: 8px;
+}
+
+.trial-title {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .trial-timer {
   margin-top: 8px;
-  color: rgba(255,255,255,0.86);
-  font-size: 16px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
 }
 
-/* 右上：月神ボード */
+/* 月神 */
 .moon-god-board {
-  position: fixed;
-  top: 95px;
-  right: 95px;
-  min-width: 230px;
-  padding: 15px 22px;
+  position: absolute;
+  top: 90px;
+  right: 40px;
+  width: 220px;
+  padding: 14px;
   border-radius: 18px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 230, 120, 0.2), transparent 42%),
-    rgba(8, 7, 30, 0.9);
+  background: rgba(8, 10, 32, 0.92);
   border: 2px solid gold;
-  box-shadow: 0 0 34px rgba(255, 215, 0, 0.68);
-  opacity: 0;
-  transition: 0.3s ease;
-  z-index: 30;
+  box-shadow: 0 0 25px gold;
   text-align: center;
+  opacity: 0;
+  z-index: 30;
 }
 
 .moon-god-board.show {
   opacity: 1;
 }
 
-.moon-god-board strong {
-  display: block;
-  margin-top: 5px;
-  font-size: 26px;
-  color: #ffe56b;
-  text-shadow: 0 0 12px gold;
-}
-/* 通常ギフトポップアップ */
-.popup {
-  position: fixed;
+/* ポップアップ */
+.popup,
+.roulette {
+  position: absolute;
   left: 50%;
   top: 45%;
-  transform: translate(-50%, -50%) scale(0.85);
-  width: 430px;
-  padding: 28px;
-  border-radius: 28px;
-  text-align: center;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 230, 145, 0.2), transparent 35%),
-    rgba(5, 8, 28, 0.94);
-  border: 2px solid rgba(255, 230, 150, 0.82);
-  box-shadow:
-    0 0 50px rgba(255, 220, 120, 0.6),
-    inset 0 0 24px rgba(255,255,255,0.04);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 40;
-}
-
-.popup.show {
-  animation: popupShow 4s ease forwards;
-}
-
-@keyframes popupShow {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.72);
-  }
-  15% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.06);
-  }
-  25% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-#popupTitle {
-  font-size: 31px;
-  color: #fff1a5;
-  font-weight: bold;
-  text-shadow: 0 0 18px gold;
-}
-
-#popupName {
-  margin-top: 10px;
-  font-size: 27px;
-  color: #ffe56b;
-  text-shadow: 0 0 12px rgba(255, 220, 120, 0.8);
-}
-
-#popupText {
-  margin-top: 11px;
-  font-size: 20px;
-  line-height: 1.5;
-  white-space: pre-line;
-}
-
-/* 大ギフト：ルーレット */
-.roulette {
-  position: fixed;
-  left: 50%;
-  bottom: 110px;
-  transform: translateX(-50%) scale(0.9);
+  transform: translate(-50%, -50%);
   width: 420px;
   padding: 24px;
-  border-radius: 24px;
+  border-radius: 22px;
+  background: rgba(5, 8, 28, 0.94);
+  border: 2px solid rgba(255, 230, 150, 0.85);
+  box-shadow: 0 0 45px rgba(255, 220, 120, 0.6);
   text-align: center;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(120, 190, 255, 0.18), transparent 38%),
-    rgba(6, 8, 30, 0.94);
-  border: 2px solid rgba(170, 210, 255, 0.85);
-  box-shadow: 0 0 42px rgba(100, 190, 255, 0.6);
   opacity: 0;
-  pointer-events: none;
-  z-index: 35;
+  z-index: 50;
 }
 
+.popup.show,
 .roulette.show {
-  animation: rouletteShow 5s ease forwards;
+  animation: showBox 4s ease forwards;
 }
 
-@keyframes rouletteShow {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.8);
-  }
-  15% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.04);
-  }
-  75% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.95);
-  }
+@keyframes showBox {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
 }
 
-.roulette-title {
-  color: #aee1ff;
-  font-size: 18px;
-  margin-bottom: 8px;
-  text-shadow: 0 0 12px rgba(120, 190, 255, 0.9);
-}
-
-#rouletteText {
-  color: #fff;
-  font-size: 26px;
+.popup-title,
+#popupTitle {
+  font-size: 28px;
+  color: #fff1a5;
   font-weight: bold;
-  text-shadow: 0 0 14px rgba(255,255,255,0.7);
 }
 
-/* GIFT表示ウィンドウ */
-.gift-window {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  width: 440px;
-  padding: 26px;
-  border-radius: 26px;
-  transform: translate(-50%, -50%) scale(0.9);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 230, 145, 0.18), transparent 38%),
-    rgba(6, 8, 28, 0.94);
-  border: 2px solid rgba(255, 230, 150, 0.86);
-  box-shadow:
-    0 0 55px rgba(255, 220, 120, 0.55),
-    inset 0 0 24px rgba(255,255,255,0.04);
-  color: white;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 45;
+.popup-name,
+#popupName {
+  margin-top: 10px;
+  font-size: 24px;
+  color: #ffe56b;
 }
 
-.gift-window.show {
-  animation: giftWindowShow 6s ease forwards;
-}
-
-@keyframes giftWindowShow {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -46%) scale(0.82);
-  }
-  14% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.03);
-  }
-  24% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  82% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -54%) scale(0.96);
-  }
-}
-
-.gift-window-title {
-  text-align: center;
-  color: #fff3b0;
-  font-size: 26px;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  margin-bottom: 18px;
-  text-shadow: 0 0 18px gold;
-}
-
-.gift-line {
-  padding: 12px 4px;
-  border-top: 1px solid rgba(255, 230, 150, 0.28);
+.popup-text,
+#popupText {
+  margin-top: 10px;
   font-size: 18px;
-  color: rgba(255,255,255,0.92);
-}
-
-.gift-window-footer {
-  margin-top: 14px;
-  text-align: center;
-  color: #e8d79a;
-  font-size: 13px;
-  letter-spacing: 0.15em;
-}
-/* =========================================================
-   ✨ 常時エフェクト
-========================================================= */
-
-.star-dot{
-    position:fixed;
-    width:2px;
-    height:2px;
-    border-radius:50%;
-    background:#fff9d6;
-    box-shadow:0 0 10px rgba(255,240,180,.9);
-    animation:twinkle 3s ease-in-out infinite;
-    z-index:1;
-}
-
-@keyframes twinkle{
-    0%,100%{
-        opacity:.2;
-        transform:scale(.8);
-    }
-    50%{
-        opacity:1;
-        transform:scale(1.5);
-    }
-}
-
-.moon-orb{
-    position:fixed;
-    width:4px;
-    height:4px;
-    border-radius:50%;
-    background:#fff4aa;
-    box-shadow:0 0 14px gold;
-    animation:moonOrb 4s linear forwards;
-    z-index:2;
-}
-
-@keyframes moonOrb{
-
-    0%{
-        transform:translateY(0) scale(.3);
-        opacity:0;
-    }
-
-    20%{
-        opacity:1;
-    }
-
-    100%{
-        transform:translateY(-120px) scale(1.5);
-        opacity:0;
-    }
-
-}
-
-.shooting-star{
-    position:fixed;
-    width:180px;
-    height:3px;
-    background:linear-gradient(90deg,#fff,rgba(255,255,255,0));
-    transform:rotate(-18deg);
-    filter:drop-shadow(0 0 8px white);
-    animation:shooting 1.4s linear forwards;
-    z-index:60;
-}
-
-@keyframes shooting{
-
-    0%{
-        left:-200px;
-        opacity:0;
-    }
-
-    20%{
-        opacity:1;
-    }
-
-    100%{
-        left:120vw;
-        opacity:0;
-    }
-
-}
-
-/* =========================================================
-   👑 月神降臨
-========================================================= */
-
-.god-scene{
-
-    position:fixed;
-    inset:0;
-    opacity:0;
-    pointer-events:none;
-    z-index:999;
-    overflow:hidden;
-
-}
-
-.god-scene.show{
-
-    animation:godScene 7s ease forwards;
-
-}
-
-@keyframes godScene{
-
-    0%{
-        opacity:0;
-    }
-
-    5%{
-        opacity:1;
-    }
-
-    90%{
-        opacity:1;
-    }
-
-    100%{
-        opacity:0;
-    }
-
-}
-
-.god-dark{
-
-    position:absolute;
-    inset:0;
-    background:
-    radial-gradient(circle,
-    rgba(255,235,160,.12),
-    transparent 35%),
-    rgba(0,0,15,.95);
-
-}
-
-.god-moon-wrap{
-
-    position:absolute;
-    inset:0;
-    display:grid;
-    place-items:center;
-
-}
-
-#godSceneMoon{
-
-    width:280px;
-    height:280px;
-    object-fit:contain;
-
-    filter:
-    brightness(1.3)
-    drop-shadow(0 0 60px rgba(255,240,170,1))
-    drop-shadow(0 0 180px rgba(255,210,80,.9));
-
-}
-
-.god-scene.show #godSceneMoon{
-
-    animation:godMoonZoom 7s ease forwards;
-
-}
-
-@keyframes godMoonZoom{
-
-    0%{
-        transform:scale(.2);
-        opacity:0;
-    }
-
-    15%{
-        transform:scale(1.2);
-        opacity:1;
-    }
-
-    45%{
-        transform:scale(4);
-    }
-
-    70%{
-        transform:scale(6);
-    }
-
-    100%{
-        transform:scale(7);
-        opacity:0;
-    }
-
-}
-
-.god-text{
-
-    position:absolute;
-    left:50%;
-    top:52%;
-    transform:translate(-50%,-50%);
-    width:90%;
-    text-align:center;
-    color:#fff6cb;
-
-    opacity:0;
-
-    text-shadow:
-    0 0 18px gold,
-    0 0 42px rgba(255,220,120,.9);
-
-}
-
-.god-scene.show .god-text{
-
-    animation:godText 7s ease forwards;
-
-}
-
-@keyframes godText{
-
-    0%,28%{
-        opacity:0;
-        transform:translate(-50%,-42%) scale(.8);
-    }
-
-    38%{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(1);
-    }
-
-    82%{
-        opacity:1;
-    }
-
-    100%{
-        opacity:0;
-        transform:translate(-50%,-56%) scale(1.05);
-    }
-
-}
-
-.god-sub{
-
-    font-size:24px;
-    letter-spacing:.25em;
-
-}
-
-.god-name{
-
-    margin-top:15px;
-    font-size:62px;
-    font-weight:bold;
-    letter-spacing:.1em;
-
-}
-
-.god-message{
-
-    margin-top:18px;
-    font-size:26px;
-    line-height:1.6;
-
-}
-
-.god-particle{
-
-    position:fixed;
-    width:5px;
-    height:5px;
-    border-radius:50%;
-    background:#fff3a6;
-    box-shadow:0 0 15px gold;
-    animation:godParticle 2.5s ease forwards;
-    z-index:1000;
-
-}
-
-@keyframes godParticle{
-
-    0%{
-
-        transform:translateY(0) scale(.3);
-        opacity:0;
-
-    }
-
-    20%{
-
-        opacity:1;
-
-    }
-
-    100%{
-
-        transform:translateY(-180px) scale(1.5);
-        opacity:0;
-
-    }
-
-}
-/* =========================
-   HUD位置 最終版：中央基準
-========================= */
-
-.fragment-hud {
-  position: fixed !important;
-  left: 50% !important;
-  bottom: 95px !important;
-  transform: translateX(-360px) !important;
-  width: 260px !important;
-}
-
-.trial-hud {
-  position: fixed !important;
-  left: 50% !important;
-  bottom: 95px !important;
-  transform: translateX(100px) !important;
-  width: 260px !important;
-}
-
-.top-oracle {
-  position: fixed !important;
-  top: 70px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
-
-.moon-god-board {
-  position: fixed !important;
-  left: 50% !important;
-  top: 90px !important;
-  transform: translateX(100px) !important;
+  white-space: pre-line;
 }
